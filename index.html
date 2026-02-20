@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Наталія Поправка • Акварель • AR</title>
+
+<style>
+  :root{
+    --paper:#fbf6ef;
+    --ink:#1f1f24;
+    --muted:#6b6772;
+    --glass: rgba(255,255,255,.72);
+    --stroke: rgba(35,35,55,.12);
+    --shadow: 0 24px 60px rgba(18,18,30,.14);
+    --radius: 22px;
+    --rose:#c86f7a;
+    --lav:#7b6bd6;
+    --aqua:#2f9c8a;
+    --sky:#4b86c6;
+    --btn: rgba(255,255,255,.78);
+    --btnHover: rgba(255,255,255,.92);
+    --max: 500px;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 800px at 18% 12%, rgba(123,107,214,.18), transparent 55%),
+      radial-gradient(900px 700px at 82% 28%, rgba(47,156,138,.16), transparent 55%),
+      radial-gradient(1000px 700px at 50% 98%, rgba(200,111,122,.16), transparent 60%),
+      linear-gradient(180deg, #fff, var(--paper));
+    overflow-x:hidden;
+  }
+
+  body:before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:.25;
+    mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
+  }
+
+  .wash{
+    position:fixed;
+    inset:auto;
+    width:520px;
+    height:520px;
+    opacity:.9;
+    pointer-events:none;
+    z-index:0;
+    animation: float 10s ease-in-out infinite;
+  }
+  .wash.w1{ left:-220px; top:-180px; animation-duration: 11.5s; }
+  .wash.w2{ right:-240px; top:120px; animation-duration: 13s; opacity:.75;}
+  .wash.w3{ left:50%; transform:translateX(-50%); bottom:-260px; animation-duration: 12s; opacity:.7;}
+
+  @keyframes float{
+    0%,100%{ transform: translate(0,0) rotate(0deg); }
+    50%{ transform: translate(12px, -10px) rotate(2deg); }
+  }
+
+  .wrap{
+    position:relative;
+    z-index:1;
+    width:min(var(--max), 100%);
+    margin:0 auto;
+    padding: 26px 18px 40px;
+  }
+
+  .card{
+    background: var(--glass);
+    border: 1px solid var(--stroke);
+    box-shadow: var(--shadow);
+    border-radius: var(--radius);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .hero{
+    padding: 22px 18px 18px;
+    text-align:center;
+    transform: translateY(10px);
+    opacity:0;
+    animation: rise .7s ease forwards;
+  }
+
+  @keyframes rise{
+    to{ transform: translateY(0); opacity:1; }
+  }
+
+  .avatar{
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(255,255,255,.9);
+    box-shadow: 0 16px 34px rgba(25,25,40,.16);
+    background:#fff;
+  }
+
+  .name{
+    font-size: 26px;
+    letter-spacing: .25px;
+    margin: 14px 0 4px;
+  }
+
+  .subtitle{
+    margin:0 auto;
+    max-width: 46ch;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    color: var(--muted);
+    font-size: 14.8px;
+    line-height:1.4;
+  }
+
+  .badgeRow{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top: 14px;
+  }
+
+  .badge{
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    font-size: 12.5px;
+    padding: 7px 11px;
+    border-radius: 999px;
+    border: 1px solid rgba(35,35,55,.10);
+    background: rgba(255,255,255,.55);
+  }
+
+  .section{
+    margin-top: 14px;
+    padding: 16px;
+    opacity:0;
+    transform: translateY(10px);
+    animation: rise .7s ease forwards;
+    animation-delay: .08s;
+  }
+
+  .section + .section{
+    animation-delay: .16s;
+  }
+
+  .sectionTitle{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:10px;
+    margin-bottom: 10px;
+  }
+
+  .sectionTitle h2{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    font-size: 12px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: rgba(40,40,55,.65);
+  }
+
+  .small{
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    font-size: 12.5px;
+    color: rgba(60,60,75,.65);
+  }
+
+  .gallery{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .thumb{
+    aspect-ratio: 1 / 1;
+    border-radius: 16px;
+    overflow:hidden;
+    border: 1px solid rgba(35,35,55,.10);
+    background:
+      radial-gradient(70% 70% at 30% 25%, rgba(200,111,122,.18), transparent 60%),
+      radial-gradient(70% 70% at 70% 70%, rgba(123,107,214,.18), transparent 60%),
+      linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,.35));
+    box-shadow: 0 16px 30px rgba(20,20,30,.10);
+    position:relative;
+  }
+  .thumb img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .thumb:after{
+    content:"";
+    position:absolute; inset:0;
+    background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,.08));
+    pointer-events:none;
+  }
+
+  .btn{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    text-decoration:none;
+    padding: 14px 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(35,35,55,.12);
+    background: var(--btn);
+    color: var(--ink);
+    box-shadow: 0 14px 26px rgba(18,18,30,.10);
+    transition: transform .14s ease, box-shadow .14s ease, background .14s ease;
+    margin-top: 10px;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    font-weight: 680;
+    letter-spacing:.1px;
+  }
+
+  .btn:hover{
+    transform: translateY(-1px);
+    background: var(--btnHover);
+    box-shadow: 0 18px 34px rgba(18,18,30,.14);
+  }
+
+  .left{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    min-width:0;
+  }
+
+  .ico{
+    width: 36px;
+    height: 36px;
+    border-radius: 14px;
+    display:grid;
+    place-items:center;
+    color:#fff;
+    flex:0 0 36px;
+    box-shadow: 0 12px 20px rgba(20,20,30,.14);
+    font-size:16px;
+  }
+
+  .c-rose{ background: linear-gradient(135deg, var(--rose), #f2b6a8); }
+  .c-lav { background: linear-gradient(135deg, var(--lav), #c7c3ff); }
+  .c-aqua{ background: linear-gradient(135deg, var(--aqua), #a5eadb); }
+  .c-sky { background: linear-gradient(135deg, var(--sky), #b4dbff); }
+
+  .btnText{ min-width:0; }
+  .btnText .main{
+    display:block;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .btnText .meta{
+    display:block;
+    font-weight: 520;
+    font-size: 12.5px;
+    color: rgba(70,70,85,.70);
+    margin-top: 2px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .arrow{
+    opacity:.55;
+    font-weight:800;
+  }
+
+  .note{
+    margin-top: 10px;
+    padding: 12px 12px;
+    border-radius: 16px;
+    border: 1px dashed rgba(35,35,55,.20);
+    background: rgba(255,255,255,.55);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    font-size: 13px;
+    line-height:1.35;
+    color: rgba(55,55,70,.82);
+  }
+
+  .steps{
+    margin: 10px 0 0;
+    padding-left: 16px;
+  }
+  .steps li{ margin: 6px 0; }
+
+  .footer{
+    margin-top: 14px;
+    text-align:center;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    font-size: 12.5px;
+    color: rgba(70,70,85,.62);
+    padding: 10px 8px;
+  }
+
+  @media (max-width:360px){
+    .gallery{ grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+
+<body>
+<svg class="wash w1" viewBox="0 0 600 600" aria-hidden="true">
+  <defs>
+    <radialGradient id="g1" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="rgba(123,107,214,.35)"/>
+      <stop offset="55%" stop-color="rgba(200,111,122,.22)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+  </defs>
+  <path d="M410,78c74,36,119,114,104,198c-15,84-90,174-187,199c-98,25-219-15-256-101c-37-86,11-220,101-278C262,38,336,42,410,78Z" fill="url(#g1)"/>
+</svg>
+
+<svg class="wash w2" viewBox="0 0 600 600" aria-hidden="true">
+  <defs>
+    <radialGradient id="g2" cx="55%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="rgba(47,156,138,.34)"/>
+      <stop offset="55%" stop-color="rgba(75,134,198,.20)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+  </defs>
+  <path d="M455,125c61,52,93,133,70,207c-23,74-101,141-189,157c-88,16-185-20-226-94c-41-74-26-186,33-256c59-70,153-66,312-14Z" fill="url(#g2)"/>
+</svg>
+
+<svg class="wash w3" viewBox="0 0 600 600" aria-hidden="true">
+  <defs>
+    <radialGradient id="g3" cx="50%" cy="50%" r="72%">
+      <stop offset="0%" stop-color="rgba(200,111,122,.26)"/>
+      <stop offset="55%" stop-color="rgba(123,107,214,.18)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+  </defs>
+  <path d="M410,92c88,40,154,132,139,220c-15,88-111,172-214,192c-103,20-212-25-250-103c-38-78-6-189,58-257C207,76,322,52,410,92Z" fill="url(#g3)"/>
+</svg>
+
+<div class="wrap">
+  <div class="card hero">
+    <img class="avatar" src="nataliia.jpg" alt="Наталія Поправка" />
+    <div class="name">Наталія Поправка</div>
+    <p class="subtitle">Акварельні роботи • авторські серії • оживлені AR-картини</p>
+    <div class="badgeRow">
+      <div class="badge">Акварель</div>
+      <div class="badge">Оригінали</div>
+      <div class="badge">AR-мистецтво</div>
+      <div class="badge">Замовлення</div>
+    </div>
+  </div>
+
+  <div class="card section">
+    <div class="sectionTitle">
+      <h2>Оживлені картини</h2>
+      <div class="small">2 роботи</div>
+    </div>
+    <div class="gallery">
+      <div class="thumb"><img src="g1.jpg" alt="Оживлена картина 1"></div>
+      <div class="thumb"><img src="g2.jpg" alt="Оживлена картина 2"></div>
+    </div>
+  </div>
+
+  <div class="card section">
+    <div class="sectionTitle">
+      <h2>Як оживити картину</h2>
+      <div class="small">швидко</div>
+    </div>
+
+    <a class="btn" href="#" onclick="redirectToStore(event)">
+      <span class="left">
+        <span class="ico c-lav">📲</span>
+        <span class="btnText">
+          <span class="main">Завантажити додаток</span>
+          <span class="meta">Artivive (iOS / Android)</span>
+        </span>
+      </span>
+      <span class="arrow">→</span>
+    </a>
+
+    <div class="note">
+      <b>Як переглянути AR:</b>
+      <ol class="steps">
+        <li>Встановіть додаток <b>Artivive</b>.</li>
+        <li>Відкрийте додаток і наведіть камеру на картину з позначкою AR.</li>
+        <li>Тримайте телефон на відстані <b>20–40 см</b>, щоб картина була в кадрі.</li>
+        <li>Зачекайте <b>2–5 секунд</b> — анімація з’явиться автоматично.</li>
+      </ol>
+      <span style="display:block; margin-top:8px;">
+        <b>Порада:</b> найкраще працює при рівному освітленні без відблисків.
+      </span>
+    </div>
+
+    <a class="btn" href="https://www.instagram.com/watercolor.np?igsh=eGJ5ZTZ2enUwbXVl" target="_blank" rel="noopener">
+      <span class="left">
+        <span class="ico c-rose">📷</span>
+        <span class="btnText">
+          <span class="main">Instagram</span>
+          <span class="meta">@watercolor.np</span>
+        </span>
+      </span>
+      <span class="arrow">→</span>
+    </a>
+
+    <a class="btn" href="https://www.facebook.com/share/1GhCYY2c7x/?mibextid=wwXIfr" target="_blank" rel="noopener">
+      <span class="left">
+        <span class="ico c-sky">f</span>
+        <span class="btnText">
+          <span class="main">Facebook</span>
+          <span class="meta">роботи та новини</span>
+        </span>
+      </span>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+
+  <div class="footer">
+    © <span id="y"></span> Наталія Поправка • Watercolor NP
+  </div>
+</div>
+
+<script>
+  document.getElementById("y").textContent = new Date().getFullYear();
+
+  function redirectToStore(event) {
+    event.preventDefault();
+    var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+    if (/android/i.test(userAgent)) {
+      window.location.href = "https://play.google.com/store/apps/details?id=com.artivive";
+      return;
+    }
+
+    if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+      window.location.href = "https://apps.apple.com/ua/app/artivive/id1188737494?l=ru";
+      return;
+    }
+
+    window.location.href = "https://artivive.com/download";
+  }
+</script>
+
+</body>
+</html>
